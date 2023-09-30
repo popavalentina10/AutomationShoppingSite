@@ -174,10 +174,7 @@ public class RegisterTest extends BaseTest {
         clickElementViaJavaScript(chromeDriver, chromeDriver.findElement(By.cssSelector("a[title=Inregistrare]")));
         sleep(500);
 
-        WebElement termsElement = chromeDriver.findElement(By.id("terms"));
-        Actions actions = new Actions(chromeDriver);
-        actions.moveToElement(termsElement);
-        actions.perform();
+        scrollToElementViaActions(chromeDriver, chromeDriver.findElement(By.id("terms")));
     }
 
     private void validateForm() throws InterruptedException {
