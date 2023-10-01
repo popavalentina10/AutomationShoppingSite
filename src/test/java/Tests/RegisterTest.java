@@ -1,196 +1,106 @@
 package Tests;
 
-import core.utils.ConfigUtils;
-import core.utils.ConstantUtils;
+import PageObjects.RegisterPage;
+import Utils.GenericUtils;
 import org.junit.Assert;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class RegisterTest extends BaseTest {
-    private WebDriver chromeDriver;
+    RegisterPage registerPage;
 
     @BeforeMethod
-    public void setup() {
-        System.setProperty(
-                "webdriver.chrome.driver",
-                ConfigUtils.getGenericElement(ConstantUtils.CONFIG_FILE, "chromedriver")
-        );
-        chromeDriver = new ChromeDriver();
-        chromeDriver.manage().window().maximize();
-        chromeDriver.get(ConfigUtils.getGenericElement(ConstantUtils.CONFIG_FILE, "hostname"));
-    }
-
-    @AfterMethod
-    public void quit() {
-        chromeDriver.quit();
+    private void preRegister() throws InterruptedException {
+        registerPage = new RegisterPage(driver);
+        registerPage.goToRegisterPage();
     }
 
     @Test
     public void testMissingUsername() throws InterruptedException {
-        navigateToLoginPage();
+        registerPage.register("", "vale.po@yahoo.com");
+        registerPage.validateForm();
+        registerPage.submitForm();
+        registerPage.renderSubmitFormError();
 
-        WebElement usernameElement = chromeDriver.findElement(By.id("reg_username"));
-        usernameElement.sendKeys("");
-
-        WebElement emailElement = chromeDriver.findElement(By.id("reg_email"));
-        emailElement.sendKeys("vale.po@yahoo.com");
-
-        validateForm();
-        submitForm();
-
-        WebElement errorElement = chromeDriver.findElement(By.className("woocommerce-error"));
-        Assert.assertTrue("Error message is not displayed", errorElement.isDisplayed());
-        Assert.assertEquals("Eroare: Te rog introdu un nume utilizator cu cont valid.", errorElement.getText());
+        Assert.assertTrue("Error message is not displayed when usernamed is missing", registerPage.isSubmitFormErrorVisible());
+        Assert.assertEquals("Eroare: Te rog introdu un nume utilizator cu cont valid.", registerPage.getSubmitFormErrorMessage());
     }
 
     @Test
     public void testMissingEmail() throws InterruptedException {
-        navigateToLoginPage();
+        registerPage.register("NN", "");
+        registerPage.validateForm();
 
-        WebElement usernameElement = chromeDriver.findElement(By.id("reg_username"));
-        usernameElement.sendKeys("NN");
-
-        WebElement emailElement = chromeDriver.findElement(By.id("reg_email"));
-        emailElement.sendKeys("");
-
-        validateForm();
-
-        WebElement errorElement = chromeDriver.findElement(By.className("error"));
-        Assert.assertTrue("Error message is not displayed", errorElement.isDisplayed());
-        Assert.assertEquals("Introduceți o adresă de email validă.", errorElement.getText());
+        Assert.assertTrue("Error message is not displayed when email is missing", registerPage.isValidateFormErrorVisible());
+        Assert.assertEquals("Introduceți o adresă de email validă.", registerPage.getValidateFormErrorMessage());
     }
+
 
     @Test
     public void testMissingCredentials() throws Exception {
-        navigateToLoginPage();
-        validateForm();
+        registerPage.register("", "");
+        registerPage.validateForm();
 
-        WebElement errorElement = chromeDriver.findElement(By.className("error"));
-        Assert.assertTrue("Error message is not displayed", errorElement.isDisplayed());
-        Assert.assertEquals("Introduceți o adresă de email validă.", errorElement.getText());
+        Assert.assertTrue("Error message is not displayed when credentials is missing", registerPage.isValidateFormErrorVisible());
+        Assert.assertEquals("Introduceți o adresă de email validă.", registerPage.getValidateFormErrorMessage());
     }
 
     @Test
     public void testInvalidEmail() throws InterruptedException {
-        navigateToLoginPage();
+        registerPage.register("", "test");
+        registerPage.validateForm();
 
-        WebElement emailElement = chromeDriver.findElement(By.id("reg_email"));
-        emailElement.sendKeys("test");
-
-        validateForm();
-
-        WebElement errorElement = chromeDriver.findElement(By.className("error"));
-        Assert.assertTrue("Error message is not displayed", errorElement.isDisplayed());
-        Assert.assertEquals("Introduceți o adresă de email validă.", errorElement.getText());
+        Assert.assertTrue("Error message is not displayed when is invalid email", registerPage.isValidateFormErrorVisible());
+        Assert.assertEquals("Introduceți o adresă de email validă.", registerPage.getValidateFormErrorMessage());
     }
 
     @Test
     public void testInvalidUsername() throws InterruptedException {
-        navigateToLoginPage();
+        registerPage.register("  ", "vale.p999999@yahoo.com");
+        registerPage.validateForm();
+        registerPage.submitForm();
+        registerPage.renderSubmitFormError();
 
-        WebElement usernameElement = chromeDriver.findElement(By.id("reg_username"));
-        usernameElement.sendKeys("  ");
-
-        WebElement emailElement = chromeDriver.findElement(By.id("reg_email"));
-        emailElement.sendKeys("vale.p999999@yahoo.com");
-
-        validateForm();
-        submitForm();
-
-        WebElement errorElement = chromeDriver.findElement(By.className("woocommerce-error"));
-        Assert.assertTrue("Error message is not displayed", errorElement.isDisplayed());
-        Assert.assertEquals("Eroare: Te rog introdu un nume utilizator cu cont valid.", errorElement.getText());
+        Assert.assertTrue("Error message is not displayed when username is invalid", registerPage.isSubmitFormErrorVisible());
+        Assert.assertEquals("Eroare: Te rog introdu un nume utilizator cu cont valid.", registerPage.getSubmitFormErrorMessage());
     }
+
 
     @Test
     public void testUncheckTermsAndConditions() throws InterruptedException {
-        navigateToLoginPage();
+        registerPage.register("sample", "sample@yahoo.com");
+        registerPage.uncheckTermsCheckbox();
+        registerPage.validateForm();
+        GenericUtils.refreshPage(driver);
+        registerPage.uncheckTermsCheckbox();
+        registerPage.submitForm();
+        registerPage.renderSubmitFormError();
 
-        WebElement usernameElement = chromeDriver.findElement(By.id("reg_username"));
-        usernameElement.sendKeys("sample");
 
-        WebElement emailElement = chromeDriver.findElement(By.id("reg_email"));
-        emailElement.sendKeys("sample@yahoo.com");
-
-        uncheckCheckbox(chromeDriver, chromeDriver.findElement(By.id("terms")));
-        validateForm();
-        refreshPage(chromeDriver);
-        uncheckCheckbox(chromeDriver, chromeDriver.findElement(By.id("terms")));
-        submitForm();
-
-        WebElement errorElement = chromeDriver.findElement(By.className("woocommerce-error"));
-        Assert.assertTrue("Error message is not displayed", errorElement.isDisplayed());
-        Assert.assertEquals(
-                "Eroare: Te rog citește și acceptă termenii și condițiile pentru a continua.",
-                errorElement.getText()
-        );
+        Assert.assertTrue("Error message is not displayed when terms is not checked", registerPage.isSubmitFormErrorVisible());
+        Assert.assertEquals("Eroare: Te rog citește și acceptă termenii și condițiile pentru a continua.", registerPage.getSubmitFormErrorMessage());
     }
+
 
     @Test
     public void testCreateAnotherAccountWithSameEmail() throws InterruptedException {
-        navigateToLoginPage();
+        registerPage.register("SameEmail", "popa_valentina10@yahoo.com");
+        registerPage.validateForm();
 
-        WebElement usernameElement = chromeDriver.findElement(By.id("reg_username"));
-        usernameElement.sendKeys("SameEmail");
-
-        WebElement emailElement = chromeDriver.findElement(By.id("reg_email"));
-        emailElement.sendKeys("popa_valentina10@yahoo.com");
-
-        validateForm();
-
-        WebElement errorElement = chromeDriver.findElement(By.className("error"));
-        Assert.assertTrue("Error message is not displayed", errorElement.isDisplayed());
-        Assert.assertEquals("Este înregistrat deja un cont cu adresa ta de email.", errorElement.getText());
+        Assert.assertTrue("Error message is not displayed when is create another account with same email.", registerPage.isValidateFormErrorVisible());
+        Assert.assertEquals("Este înregistrat deja un cont cu adresa ta de email.", registerPage.getValidateFormErrorMessage());
     }
 
     @Test
     public void testCreateAccount() throws InterruptedException {
-        long timestamp = generateTimestamp();
+        long timestamp = GenericUtils.generateTimestamp();
 
-        navigateToLoginPage();
-        WebElement usernameElement = chromeDriver.findElement(By.id("reg_username"));
-        usernameElement.sendKeys("validAccount" + timestamp);
+        registerPage.register("validAccount" + timestamp, timestamp + "popa_valentina10@yahoo.com");
+        registerPage.validateForm();
+        GenericUtils.sleep(2500);
+        registerPage.submitForm();
+        registerPage.renderLoginSuccessPage();
 
-        WebElement emailElement = chromeDriver.findElement(By.id("reg_email"));
-        emailElement.sendKeys(timestamp + "valid.account@yahoo.com");
-
-        validateForm();
-        submitForm();
-
-        WebElement myAccountElement = chromeDriver.findElement(By.id("my-account-menu"));
-        Assert.assertTrue("Error message is not displayed", myAccountElement.isDisplayed());
-        Assert.assertNotNull(myAccountElement);
-    }
-
-    private void navigateToLoginPage() throws InterruptedException {
-        WebElement loginElement = chromeDriver.findElement(By.className("profile-icon"));
-        loginElement.click();
-
-        sleep(500);
-        clickElementViaJavaScript(chromeDriver, chromeDriver.findElement(By.cssSelector("a[title=Inregistrare]")));
-        sleep(500);
-
-        scrollToElementViaActions(chromeDriver, chromeDriver.findElement(By.id("terms")));
-    }
-
-    private void validateForm() throws InterruptedException {
-        clickElementViaJavaScript(chromeDriver, chromeDriver.findElement(By.className("register-validate")));
-        sleep(1500);
-    }
-
-    private void submitForm() {
-        clickElementViaJavaScript(
-                chromeDriver, chromeDriver.findElement(By.className("woocommerce-form-register__submit"))
-        );
-    }
-
-    private void uncheckCheckbox(WebDriver driver, WebElement checkbox) {
-        if (checkbox.isSelected()) {
-            clickElementViaJavaScript(driver, checkbox);
-        }
+        Assert.assertTrue("Error creating account.", registerPage.isMyAccountDetailsVisible());
     }
 }
