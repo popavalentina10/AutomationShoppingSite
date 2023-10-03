@@ -10,6 +10,7 @@
             <class name="Tests.BaseTest"/>
             <class name="Tests.LoginTest"/>
             <class name="Tests.RegisterTest"/>
+            <class name="Tests.WishlistTest"/>
         </classes>
     </test> <!-- AutomationShoppingSite -->
 </suite> <!-- Default Suite -->
