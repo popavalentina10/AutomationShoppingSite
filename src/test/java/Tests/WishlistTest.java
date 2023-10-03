@@ -1,5 +1,6 @@
 package Tests;
 
+import ObjectModels.LoginModel;
 import PageObjects.WishlistPage;
 import org.junit.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -23,20 +24,20 @@ public class WishlistTest extends BaseTest {
         Assert.assertEquals("Please, log in to use the wishlist features", wishlistPage.getLoginRequiredErrorMessage());
     }
 
-    @Test
-    public void testLoginWithSuccessAndItemNotAdded() {
+    @Test(dataProvider = "jsonDataProvider")
+    public void testLoginWithSuccessAndItemNotAdded(LoginModel loginModel) {
         wishlistPage.clickOnAddToWishListFromMenuPage();
         wishlistPage.renderIsLoginRequiredError();
-        wishlistPage.login("popa_valentina10@yahoo.com", "Letmein2020!VP");
+        wishlistPage.login(loginModel.getAccount().getUsername(), loginModel.getAccount().getPassword());
         wishlistPage.clickFavoriteProducts();
 
         Assert.assertTrue("Product has not been added", wishlistPage.isProductAdded());
     }
 
-    @Test
-    public void testLoginWithSuccessButWishIconIsMissing() throws InterruptedException {
+    @Test(dataProvider = "jsonDataProvider")
+    public void testLoginWithSuccessButWishIconIsMissing(LoginModel loginModel) throws InterruptedException {
         wishlistPage.goToLoginPage();
-        wishlistPage.login("popa_valentina10@yahoo.com", "Letmein2020!VP");
+        wishlistPage.login(loginModel.getAccount().getUsername(), loginModel.getAccount().getPassword());
         wishlistPage.redirectToMyAccountPage();
 
         Assert.assertTrue("Login failed with valid credentials", wishlistPage.isMyAccountPageLoaded());
@@ -52,10 +53,10 @@ public class WishlistTest extends BaseTest {
         Assert.assertTrue("Product has not been added", wishlistPage.isProductAdded());
     }
 
-    @Test
-    public void testLoginWithSuccessAndAddItemToWishList() throws InterruptedException {
+    @Test(dataProvider = "jsonDataProvider")
+    public void testLoginWithSuccessAndAddItemToWishList(LoginModel loginModel) throws InterruptedException {
         wishlistPage.goToLoginPage();
-        wishlistPage.login("popa_valentina10@yahoo.com", "Letmein2020!VP");
+        wishlistPage.login(loginModel.getAccount().getUsername(), loginModel.getAccount().getPassword());
         wishlistPage.redirectToMyAccountPage();
 
         Assert.assertTrue("Login failed with valid credentials", wishlistPage.isMyAccountPageLoaded());

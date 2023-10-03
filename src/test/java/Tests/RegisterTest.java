@@ -35,7 +35,6 @@ public class RegisterTest extends BaseTest {
         Assert.assertEquals("Introduceți o adresă de email validă.", registerPage.getValidateFormErrorMessage());
     }
 
-
     @Test
     public void testMissingCredentials() throws Exception {
         registerPage.register("", "");
@@ -65,7 +64,6 @@ public class RegisterTest extends BaseTest {
         Assert.assertEquals("Eroare: Te rog introdu un nume utilizator cu cont valid.", registerPage.getSubmitFormErrorMessage());
     }
 
-
     @Test
     public void testUncheckTermsAndConditions() throws InterruptedException {
         registerPage.register("sample", "sample@yahoo.com");
@@ -76,11 +74,9 @@ public class RegisterTest extends BaseTest {
         registerPage.submitForm();
         registerPage.renderSubmitFormError();
 
-
         Assert.assertTrue("Error message is not displayed when terms is not checked", registerPage.isSubmitFormErrorVisible());
         Assert.assertEquals("Eroare: Te rog citește și acceptă termenii și condițiile pentru a continua.", registerPage.getSubmitFormErrorMessage());
     }
-
 
     @Test
     public void testCreateAnotherAccountWithSameEmail() throws InterruptedException {

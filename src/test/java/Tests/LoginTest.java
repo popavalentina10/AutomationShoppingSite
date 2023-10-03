@@ -1,5 +1,6 @@
 package Tests;
 
+import ObjectModels.LoginModel;
 import PageObjects.LoginPage;
 import org.junit.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -14,9 +15,9 @@ public class LoginTest extends BaseTest {
         loginPage.goToLoginPage();
     }
 
-    @Test
-    public void testValidCredentials() {
-        loginPage.login("popa_valentina10@yahoo.com", "Letmein2020!VP");
+    @Test(dataProvider = "jsonDataProvider")
+    public void testValidCredentials(LoginModel loginModel) {
+        loginPage.login(loginModel.getAccount().getUsername(), loginModel.getAccount().getPassword());
         loginPage.redirectToMyAccountPage();
 
         Assert.assertTrue("Login failed with valid credentials", loginPage.isMyAccountPageLoaded());
