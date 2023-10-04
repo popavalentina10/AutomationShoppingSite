@@ -11,6 +11,7 @@
             <class name="Tests.LoginTest"/>
             <class name="Tests.RegisterTest"/>
             <class name="Tests.WishlistTest"/>
+            <class name="Tests.SearchTest"/>
         </classes>
     </test> <!-- AutomationShoppingSite -->
 </suite> <!-- Default Suite -->
