@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Smoke Suite">
+    <listeners>
+        <listener class-name="org.testng.reporters.EmailableReporter2"/>
+        <listener class-name="org.testng.reporters.EmailableReporter"/>
+    </listeners>
+    <test thread-count="5" name="AutomationShoppingSite">
+        <classes>
+            <class name="Tests.LoginTest">
+                <methods>
+                    <include name="testValidCredentials"/>
+                </methods>
+            </class>
+            <class name="Tests.RegisterTest">
+                <methods>
+                    <include name="testCreateAccount"/>
+                </methods>
+            </class>
+            <class name="Tests.WishlistTest">
+                <methods>
+                    <include name="testLoginWithSuccessAndItemNotAdded"/>
+                    <include name="testLoginWithSuccessButWishIconIsMissing"/>
+                    <include name="testLoginWithSuccessAndAddItemToWishList"/>
+                </methods>
+            </class>
+            <class name="Tests.SearchTest">
+                <methods>
+                    <include name="testAutocompleteResultFound"/>
+                    <include name="testSubmitResultFound"/>
+                </methods>
+            </class>
+            <class name="Tests.AddToCartTest">
+                <methods>
+                    <include name="testIncreasingNoOfItems"/>
+                    <include name="testDecreasingNoOfItems"/>
+                </methods>
+            </class>
+        </classes>
+    </test> <!-- AutomationShoppingSite -->
+</suite> <!-- Default Suite -->
