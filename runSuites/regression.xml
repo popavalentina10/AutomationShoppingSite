@@ -12,6 +12,7 @@
             <class name="Tests.RegisterTest"/>
             <class name="Tests.WishlistTest"/>
             <class name="Tests.SearchTest"/>
+            <class name="Tests.AddToCartTest"/>
         </classes>
     </test> <!-- AutomationShoppingSite -->
 </suite> <!-- Default Suite -->
